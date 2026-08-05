@@ -1,0 +1,57 @@
+[General]
+NomDuBloc=ARC-PTS ALTI
+VersionDeBPT=15.200000
+[Point]
+Diametre=0.000000
+Calque=ARC-PTS ALTI
+Couleur=2
+[Matricule]
+Selection=1
+Hauteur=0.100000
+StyleDeTexte=Standard
+Justification=1
+Calque=ARC-PTS ALTI Mat
+Couleur=3
+Rotation=0
+DeltaX=0.000000
+DeltaY=0.000000
+[Altitude]
+Selection=1
+Hauteur=0.100000
+StyleDeTexte=Standard
+Justification=7
+Calque=ARC-PTS ALTI Alt
+Couleur=7
+Rotation=0
+DeltaX=0.000000
+DeltaY=0.000000
+[CodeSymbole]
+Selection=1
+Hauteur=0.100000
+StyleDeTexte=Standard
+Justification=3
+Calque=ARC-PTS ALTI Cod
+Couleur=4
+Rotation=0
+DeltaX=0.000000
+DeltaY=0.000000
+[PoidsHorizontal]
+Selection=0
+Hauteur=1.500000
+StyleDeTexte=Standard
+Justification=9
+Calque=TopoPhv
+Couleur=6
+Rotation=0
+DeltaX=-0.500000
+DeltaY=2.000000
+[PoidsVertical]
+Selection=0
+Hauteur=1.500000
+StyleDeTexte=Standard
+Justification=3
+Calque=TopoPhv
+Couleur=6
+Rotation=0
+DeltaX=-0.500000
+DeltaY=-2.000000

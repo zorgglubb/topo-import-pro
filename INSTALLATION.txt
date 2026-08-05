@@ -1,0 +1,372 @@
+================================================================================
+   TOPOIMPORT PRO — PLUGIN QGIS v1.1
+   Import de stations totales & Calculs topographiques
+   Auteurs : Mehdi Belarbi & Claude (Anthropic)
+================================================================================
+
+TABLE DES MATIÈRES
+──────────────────
+  1. Prérequis
+  2. Installation pas à pas (Windows)
+  3. Installation (Linux / macOS)
+  4. Correction du conflit NumPy (Windows)
+  5. Activation du plugin dans QGIS
+  6. Formats de fichiers supportés
+  7. Systèmes de coordonnées disponibles
+  8. Fonctionnalités et calculs
+  9. Résolution des erreurs fréquentes
+ 10. Désinstallation
+
+
+================================================================================
+ 1. PRÉREQUIS
+================================================================================
+
+  • QGIS version 3.10 ou supérieure (testé jusqu'à 3.40 Bratislava)
+  • Python 3.8+ (inclus automatiquement avec QGIS)
+  • [Optionnel] openpyxl pour lire les fichiers Excel (.xlsx / .xls)
+
+  Pour installer openpyxl :
+    → Ouvrir la console OSGeo4W Shell (Windows) ou un terminal
+    → Taper :  pip install openpyxl
+    OU depuis QGIS : Extensions > Console Python > taper :
+       import subprocess; subprocess.run(["pip","install","openpyxl"])
+
+
+================================================================================
+ 2. INSTALLATION PAS À PAS — WINDOWS
+================================================================================
+
+ÉTAPE 1 — Extraire l'archive
+─────────────────────────────
+  Décompresser le fichier topo_import_pro.zip.
+  Vous obtenez un dossier nommé exactement :  topo_import
+
+  ⚠ IMPORTANT : le nom du dossier doit rester "topo_import" sans modification.
+
+
+ÉTAPE 2 — Copier le dossier dans les plugins QGIS
+───────────────────────────────────────────────────
+  Copier le dossier "topo_import" dans :
+
+    C:\Users\<VotreNom>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\
+
+  Résultat attendu :
+    C:\Users\<VotreNom>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\topo_import\__init__.py
+    C:\Users\<VotreNom>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\plugins\topo_import\metadata.txt
+    ... (autres fichiers)
+
+  Si le dossier "plugins" n'existe pas, le créer manuellement.
+
+  Astuce Windows : dans l'Explorateur, coller dans la barre d'adresse :
+    %APPDATA%\QGIS\QGIS3\profiles\default\python\plugins
+
+
+ÉTAPE 3 — Copier le fichier startup.py (correctif NumPy)
+──────────────────────────────────────────────────────────
+  Copier le fichier "startup.py" (fourni dans le ZIP) dans :
+
+    C:\Users\<VotreNom>\AppData\Roaming\QGIS\QGIS3\profiles\default\python\
+
+  ⚠ Ce fichier va DANS le dossier "python\", PAS dans "plugins\".
+  Il corrige le conflit entre le NumPy utilisateur et le NumPy QGIS.
+
+  Astuce Windows : coller dans la barre d'adresse de l'Explorateur :
+    %APPDATA%\QGIS\QGIS3\profiles\default\python
+
+
+ÉTAPE 4 — Lancer ou relancer QGIS
+────────────────────────────────────
+  Fermer et rouvrir QGIS complètement si déjà ouvert.
+
+
+================================================================================
+ 3. INSTALLATION — LINUX / macOS
+================================================================================
+
+  Copier le dossier "topo_import" dans :
+
+    Linux :
+      ~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/topo_import/
+
+    macOS :
+      ~/Library/Application Support/QGIS/QGIS3/profiles/default/python/plugins/topo_import/
+
+  Copier "startup.py" dans :
+
+    Linux :
+      ~/.local/share/QGIS/QGIS3/profiles/default/python/startup.py
+
+    macOS :
+      ~/Library/Application Support/QGIS/QGIS3/profiles/default/python/startup.py
+
+  En ligne de commande (Linux) :
+    cp -r topo_import ~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/
+    cp startup.py ~/.local/share/QGIS/QGIS3/profiles/default/python/
+
+
+================================================================================
+ 4. CORRECTION DU CONFLIT NUMPY (WINDOWS — si erreur NoneType)
+================================================================================
+
+  Si vous voyez cette erreur :
+    "AttributeError: 'NoneType' object has no attribute 'write'"
+    ou "numpy\core\_multiarray_umath.py"
+
+  Cause : un NumPy installé manuellement dans AppData/Roaming/Python entre
+  en conflit avec le NumPy embarqué dans QGIS.
+
+  Solution A (recommandée) — startup.py :
+    Vérifier que le fichier startup.py a bien été copié à l'ÉTAPE 3 ci-dessus.
+    Ce fichier réordonne le sys.path automatiquement à chaque démarrage QGIS.
+
+  Solution B — Désinstaller le NumPy utilisateur :
+    Ouvrir l'invite de commande Windows (CMD) et taper :
+      pip uninstall numpy
+    Puis redémarrer QGIS.
+
+  Solution C — Lancer QGIS via OSGeo4W Shell :
+    Au lieu de l'icône bureau, lancer QGIS depuis :
+    C:\Program Files\QGIS 3.x.x\OSGeo4W.bat
+    → puis taper : qgis
+
+
+================================================================================
+ 5. ACTIVATION DU PLUGIN DANS QGIS
+================================================================================
+
+  1. Dans QGIS, menu : Extensions > Gérer et installer des extensions…
+  2. Cliquer sur l'onglet "Installées"
+  3. Chercher "TopoImport" dans la liste
+  4. Cocher la case à gauche du nom pour activer le plugin
+  5. Cliquer OK ou fermer la fenêtre
+
+  Le plugin apparaît alors :
+    • Dans le menu Extensions > TopoImport Pro
+    • Dans la barre d'outils (icône 📐)
+    • Dans la boîte à outils Processing : groupe "TopoImport Pro"
+
+
+================================================================================
+ 6. FORMATS DE FICHIERS SUPPORTÉS
+================================================================================
+
+  STATIONS TOTALES
+  ────────────────
+  Extension   Fabricant    Description
+  ─────────   ─────────    ───────────────────────────────────────────────────
+  .job        Trimble      JobXML — format XML structuré Trimble
+  .jxl        Trimble      JXL — variante XML Trimble Access
+  .dc         Trimble      DC — format texte propriétaire Trimble Survey
+  .gsi        Leica        GSI-8 et GSI-16 — format texte Leica historique
+  .idex       Leica        iDex — format XML Leica moderne
+  .gsx        GeoMax       GSX — format XML GeoMax (Zoom série)
+
+  FORMATS GÉNÉRIQUES
+  ──────────────────
+  Extension   Description
+  ─────────   ────────────────────────────────────────────────────────────────
+  .csv        Valeurs séparées (auto-détection séparateur ; , tab espace |)
+  .txt        Texte brut (même logique que CSV)
+  .asc        ASCII topographique
+  .dat        Données brutes (Leica, divers)
+  .xlsx       Excel 2007+ (nécessite openpyxl)
+  .xls        Excel 97-2003 (nécessite openpyxl)
+  .xlsm       Excel avec macros (nécessite openpyxl)
+  .xml        LandXML — standard international d'échange topo
+  .dxf        DXF AutoCAD — entités POINT extraites
+
+  FORMAT CSV/TXT — colonnes reconnues automatiquement par nom d'en-tête :
+    ID/nom    : id, name, nom, pt, point, no, num, numero
+    X/Est     : x, e, est, east, easting, coord_x
+    Y/Nord    : y, n, nord, north, northing, coord_y
+    Z/Alt     : z, h, alt, elev, elevation, altitude, ht, hauteur
+    Code      : code, cd, cod, feature
+    Description : desc, description, remarque, note, comment
+
+  Sans en-tête → ordre présumé : ID, X, Y, Z (ou X, Y, Z si 3 colonnes)
+
+
+================================================================================
+ 7. SYSTÈMES DE COORDONNÉES DISPONIBLES
+================================================================================
+
+  Le plugin propose un sélecteur complet organisé par groupes.
+  Un code EPSG manuel peut aussi être saisi directement.
+
+  LAMBERT 93 (système officiel France depuis 2001)
+  ─────────────────────────────────────────────────
+  EPSG:2154   RGF93 / Lambert-93          → Toute la France métropolitaine
+  EPSG:9793   RGF93 v2 / Lambert-93       → Réalisation IGN 2009 (QGIS 3.22+)
+
+  LAMBERT CC — CONIQUES CONFORMES PAR ZONE (topographie fine)
+  ─────────────────────────────────────────────────────────────
+  EPSG:3942   RGF93 / CC42 — Zone 1       → Latitude ~42°N (Pyrénées)
+  EPSG:3943   RGF93 / CC43 — Zone 2       → Latitude ~43°N
+  EPSG:3944   RGF93 / CC44 — Zone 3       → Latitude ~44°N
+  EPSG:3945   RGF93 / CC45 — Zone 4       → Latitude ~45°N
+  EPSG:3946   RGF93 / CC46 — Zone 5       → Latitude ~46°N (Massif Central)
+  EPSG:3947   RGF93 / CC47 — Zone 6       → Latitude ~47°N
+  EPSG:3948   RGF93 / CC48 — Zone 7       → Latitude ~48°N (Paris)
+  EPSG:3949   RGF93 / CC49 — Zone 8       → Latitude ~49°N
+  EPSG:3950   RGF93 / CC50 — Zone 9       → Latitude ~50°N (Nord)
+
+  ANCIENS SYSTÈMES LAMBERT NTF (avant 2001 — pour archives/plans anciens)
+  ─────────────────────────────────────────────────────────────────────────
+  EPSG:27561  NTF / Lambert I             → Nord de la France
+  EPSG:27562  NTF / Lambert II            → Centre-nord France
+  EPSG:27563  NTF / Lambert III           → Sud de la France
+  EPSG:27564  NTF / Lambert IV            → Corse
+  EPSG:27572  NTF / Lambert II étendu     → Toute la France (très utilisé)
+  EPSG:27571  NTF / Lambert I étendu
+  EPSG:27573  NTF / Lambert III étendu
+  EPSG:27574  NTF / Lambert IV étendu
+  EPSG:4807   NTF (Paris) géographique   → Degrés sexagésimaux, méridien Paris
+  EPSG:4275   NTF géographique           → Méridien Greenwich
+
+  WGS 84 / GPS / UTM
+  ────────────────────
+  EPSG:4326   WGS 84 géographique        → GPS, Google Maps (Lat/Lon)
+  EPSG:32629  WGS 84 / UTM 29N
+  EPSG:32630  WGS 84 / UTM 30N           → Espagne, Portugal
+  EPSG:32631  WGS 84 / UTM 31N           → France ouest
+  EPSG:32632  WGS 84 / UTM 32N           → France est, Allemagne
+
+  ETRS89 / EUROPE
+  ─────────────────
+  EPSG:4258   ETRS89 géographique
+  EPSG:3035   ETRS89 / LAEA Europe
+  EPSG:3034   ETRS89 / LCC Europe
+
+  DOM / COM FRANÇAIS
+  ───────────────────
+  EPSG:2972   RGFG95 — Guyane
+  EPSG:2975   RGR92 — La Réunion
+  EPSG:5490   RGAF09 — Martinique / Guadeloupe
+  EPSG:4471   RGM04 — Mayotte
+  EPSG:3296   RGPF — Polynésie française
+  EPSG:3163   RGN91a — Nouvelle-Calédonie
+  EPSG:4467   RGSPM06 — Saint-Pierre-et-Miquelon
+
+  Pour tout autre système : saisir directement le code EPSG dans le champ
+  "Code EPSG manuel" du sélecteur (ex: EPSG:32632 ou simplement 32632).
+
+
+================================================================================
+ 8. FONCTIONNALITÉS ET CALCULS
+================================================================================
+
+  ONGLET IMPORT
+    → Chargement de tout format listé en §6
+    → Détection automatique du séparateur et des colonnes
+    → Mapping manuel des colonnes configurable
+    → Création automatique d'une couche QGIS avec le CRS choisi
+    → Thread asynchrone (QGIS non bloqué pendant l'import)
+
+  ONGLET RAYONNEMENT
+    → Calcul de coordonnées X,Y,Z depuis mesures polaires
+    → Entrées : Hz, angle zénithal Vz, distance slope, HI, HT cible
+    → Calcul en batch (multiple points depuis une seule station)
+    → Chargement automatique des mesures brutes depuis l'import
+
+  ONGLET CHEMINEMENT
+    → Cheminement polygonal fermé avec compensation de Bowditch
+    → Cheminement ouvert (sans compensation)
+    → Rapport : fermeture angulaire, fermeture linéaire, précision 1/T
+
+  ONGLET INTERSECTION
+    → Intersection avant (depuis 2 gisements connus)
+    → Rétro-intersection / Pothenot (depuis 3 points connus)
+    → Résidu de contrôle affiché
+
+  ONGLET NIVELLEMENT
+    → Nivellement direct simple et composé
+    → Points intermédiaires pris en compte
+    → 4 classes de tolérance : I (1mm), II (2mm), III (3mm), IV (5mm)
+    → Fermeture en mm, acceptation/refus automatique
+
+  ONGLET TRANSFORMATION
+    → Transformation de Helmert 2D (4 paramètres)
+    → Résolution par moindres carrés (minimum 2 points d'appui)
+    → Rapport : Tx, Ty, rotation (gon et degrés), échelle, ppm, RMSE
+    → Résidus par point d'appui
+    → Application optionnelle aux points importés
+
+  ONGLET RÉSULTATS
+    → Table de tous les points calculés
+    → Journal de calcul avec détail complet
+    → Export CSV (encodage UTF-8 avec BOM, séparateur ;)
+    → Création de couche QGIS depuis les résultats
+
+  PROCESSING FRAMEWORK
+    → Tous les algorithmes accessibles via la boîte Processing
+    → Utilisables en batch, dans le modeleur graphique, via script Python
+    → Algorithmes : import_topo, radiation, traverse, leveling, helmert2d
+
+
+================================================================================
+ 9. RÉSOLUTION DES ERREURS FRÉQUENTES
+================================================================================
+
+  ERREUR : NameError: 'QgsProcessingParameterFeatureSource' is not defined
+  ─────────────────────────────────────────────────────────────────────────
+  → Vérifier que vous utilisez la version 1.1 du plugin (celle-ci).
+  → L'import était manquant dans v1.0, corrigé en v1.1.
+
+  ERREUR : 'NoneType' object has no attribute 'write' (NumPy)
+  ─────────────────────────────────────────────────────────────
+  → Appliquer la Solution A ou B décrite au §4 ci-dessus.
+  → Le fichier startup.py résout ce problème définitivement.
+
+  ERREUR : ModuleNotFoundError: No module named 'openpyxl'
+  ─────────────────────────────────────────────────────────
+  → Installer openpyxl : voir §1 (Prérequis).
+  → Le plugin fonctionne sans openpyxl pour tous les autres formats.
+
+  ERREUR : Plugin non visible dans la liste
+  ──────────────────────────────────────────
+  → Vérifier que le dossier est bien nommé "topo_import" (sans guillemets,
+    sans espace, sans majuscule).
+  → Vérifier que metadata.txt est présent à la racine du dossier.
+  → Dans QGIS : Extensions > Gérer > onglet "Tous" > chercher TopoImport
+    > si "Plugin non valide" : vérifier le journal Python (Affichage > Panneaux
+    > Journal des messages > onglet Python)
+
+  ERREUR : CRS invalide ou couche vide
+  ──────────────────────────────────────
+  → Vérifier le code EPSG saisi. Par exemple taper "2154" sans "EPSG:".
+  → QGIS doit avoir accès à la base de données proj pour les CRS anciens.
+  → Si Lambert II étendu (EPSG:27572) n'est pas reconnu, mettre à jour
+    la bibliothèque PROJ de QGIS (via l'installateur OSGeo4W).
+
+  ERREUR : Fichier GSI mal lu (colonnes décalées)
+  ─────────────────────────────────────────────────
+  → Vérifier si c'est du GSI-8 ou GSI-16 (longueur des mots).
+  → Le plugin détecte automatiquement la version (seuil à 200 chars/ligne).
+
+  PROBLÈME : Séparateur CSV non détecté
+  ───────────────────────────────────────
+  → Dans l'onglet Import, sélectionner manuellement le séparateur dans
+    la liste déroulante de la section "Options CSV / TXT".
+
+
+================================================================================
+ 10. DÉSINSTALLATION
+================================================================================
+
+  1. Dans QGIS : Extensions > Gérer > Installées > TopoImport Pro
+     → Décocher la case pour désactiver
+  2. Supprimer le dossier :
+     Windows  : %APPDATA%\QGIS\QGIS3\profiles\default\python\plugins\topo_import\
+     Linux    : ~/.local/share/QGIS/QGIS3/profiles/default/python/plugins/topo_import/
+     macOS    : ~/Library/Application Support/QGIS/.../plugins/topo_import/
+  3. (Optionnel) Supprimer le fichier startup.py du dossier python\
+
+
+================================================================================
+  Auteurs   : Mehdi Belarbi & Claude (Anthropic)
+  Version   : 1.1.0
+  Licence   : MIT — libre d'utilisation, modification et distribution
+  QGIS      : 3.10 à 3.99
+  Python    : 3.8+
+================================================================================
