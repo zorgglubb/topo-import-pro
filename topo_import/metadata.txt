@@ -1,0 +1,18 @@
+[general]
+name=TopoImport Pro
+qgisMinimumVersion=3.10
+qgisMaximumVersion=3.99
+description=Import de points topographiques (Trimble, Leica, GeoMax) et calculs topo complets
+version=1.3.0
+author=Mehdi Belarbi & Claude (Anthropic)
+email=contact@topoimport.com
+about=Plugin complet avec géocodification GEOCODIF Bretagne (INRAP BZH 2017).  d'import de données topographiques depuis stations totales (Trimble .job/.jxl/.dc, Leica .gsi/.idex, GeoMax .gsx) et formats génériques (CSV, XLS, TXT, DXF, LandXML). Calculs : rayonnement, cheminement, intersection, nivellement, transformation Helmert 2D. Support complet des systèmes de projection français : Lambert 93, Lambert CC zones 1-9, anciens Lambert (I, II, III, IV, II étendu), NTF Paris, RGF93, WGS84, UTM. Compatible QGIS 3.10 à 3.99.
+tracker=https://github.com/topoimport/qgis-plugin/issues
+repository=https://github.com/topoimport/qgis-plugin
+hasProcessingProvider=yes
+tags=topography,survey,total station,trimble,leica,geomax,import,traverse,leveling,lambert,lambert93,RGF93,NTF,projection,france
+homepage=https://github.com/topoimport/qgis-plugin
+category=Vector
+icon=resources/icon.png
+experimental=False
+deprecated=False
